@@ -1,71 +1,69 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct _node
+typedef struct Node
 {
-	int data;
-	struct _node *next;
+	int value;
+	struct Node* next;
 } Node;
 
-typedef struct _list
+typedef struct
 {
-	Node *head;
-	Node *tail;
-	Node *cur;
-} List;
+	Node* tail;
+} CircularLinkedList;
 
-void ListInit(List *plist)
+void push_back(CircularLinkedList* cll, int k)
 {
-	plist->head = NULL;
-	plist->tail = NULL;
+	Node* new_node = (Node*)malloc(sizeof(Node));
+	new_node->value = k;
+	new_node->next = NULL;
+
+	if (cll->tail == NULL) // 비어 있는경우
+	{
+		cll->tail = new_node;
+		new_node->next = new_node;
+	} else 
+	{
+		new_node->next = cll->tail->next;
+		cll->tail->next = new_node;
+		cll->tail = new_node;
+	}
 }
 
-int main(void)
+void erase(CircularLinkedList* cll, int k, int z)
+{
+	Node* dest = cll->tail;
+	for (int i = 0; i < k; i++)
+	{
+		if (i == k - 1)
+			cll->tail = dest;
+		dest = dest->next;
+	}
+
+	if (z == 0)
+		printf("%d", dest->value);
+	else
+		printf(", %d", dest->value);
+
+	cll->tail->next = dest->next;
+	free(dest);
+}
+
+int main()
 {
 	int n, k;
-	List *list;
-
 	scanf("%d %d", &n, &k);
-	list = (List *)malloc(sizeof(List) * n);
-	ListInit(list);
 
-	for (int i = 1; i <= n; i++)
-	{
-		Node *newnode = (Node *)malloc(sizeof(Node));
-		if (!newnode)
-			return (-1);
-		newnode->data = i;
-		newnode->next = NULL;
-		if (list->tail == NULL)
-		{
-			list->head = newnode;
-			list->tail = newnode; 
-		}
-		else
-		{
-			list->tail->next = newnode;
-			list->tail = newnode;
-		}
-	}
-	list->tail->next = list->head; // 원형 연결 리스트로 만들기
-	list->cur = list->head;
+	CircularLinkedList cll;
+	cll.tail = NULL;
+
+	for (int i = 0; i < n; i++)
+		push_back(&cll, i + 1);
 
 	printf("<");
-	while (list->head != NULL)
-	{
-		for (int i = 0; i < k; i++)
-			list->cur = list->cur->next;
-		Node *newnode = list->cur;
-		list->cur = list->cur->next;
+	for (int i = 0; i < n; i++)
+		erase(&cll, k, i);
+	printf(">\n");
 
-		if (newnode == list->head) // 리스트의 마지막 노드인 경우
-			list->head = list->head->next;
-		printf("%d", newnode->data);
-		free(newnode);
-
-		if (list->head != NULL)
-			printf(", ");
-	}
-	printf("%d>", list->cur->data);
-	return (0);
+	return 0;
 }
