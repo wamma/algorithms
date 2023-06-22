@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <stdbool.h>
 
 #define MAX_SIZE 100
-#define 
 
 typedef struct s_customer
 {
 	int		id;
+	int		arrive_time;
+	int		service_time;
 	int		category;
 }	t_customer;
 
@@ -43,6 +44,19 @@ void	enqueue(t_queue *queue, t_customer customer)
 	}
 	queue->rear = (queue->rear + 1) % MAX_SIZE;
 	queue->data[queue->rear] = customer;
+}
+
+t_customer	dequeue(t_queue *queue)
+{
+	if (is_empty(queue))
+	{
+		printf("대기중인 고객이 없습니다.\n");
+		t_customer	empty_customer;
+		empty_customer.id = -1;
+		return (empty_customer);
+	}
+	queue->front = (queue->front + 1) % MAX_SIZE;
+	return (queue->data[queue->front]);
 }
 
 int	main(void)

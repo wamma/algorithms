@@ -1,93 +1,226 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define MAX_QUEUE_SIZE 100
+#define NUM_TELLERS 5
+#define WAITING_QUEUE_SIZE 10
 
-typedef struct {
+typedef struct
+{
 	int id;
-	int category; // 1: 입출금, 예적금 / 2: 종합상담창구 / 3: VIP 창구
+	char task[50];
+	int category; // 1: 입출금, 예적금 / 2: 종합상담창구 / 3: VIP
 } Customer;
 
-typedef struct {
+typedef struct
+{
 	Customer data[MAX_QUEUE_SIZE];
 	int front;
 	int rear;
 } Queue;
 
-void initQueue(Queue* queue) {
+typedef struct
+{
+	Queue queues[NUM_TELLERS];
+	Queue vipQueue;
+} Bank;
+
+void initQueue(Queue* queue)
+{
 	queue->front = 0;
-	queue->rear = 0;
+	queue->rear = -1;
 }
 
-int isEmpty(Queue* queue) {
-	return (queue->front == queue->rear);
+int isFull(Queue* queue)
+{
+	return queue->rear == MAX_QUEUE_SIZE - 1;
 }
 
-int isFull(Queue* queue) {
-	return ((queue->rear + 1) % MAX_QUEUE_SIZE == queue->front);
+int isEmpty(Queue* queue)
+{
+	return queue->front > queue->rear;
 }
 
-void enqueue(Queue* queue, Customer customer) {
-	if (isFull(queue)) {
+void enqueue(Queue* queue, Customer customer)
+{
+	if (isFull(queue))
+	{
 		printf("Queue is full. Cannot enqueue.\n");
 		return;
 	}
 
-	queue->rear = (queue->rear + 1) % MAX_QUEUE_SIZE;
-	queue->data[queue->rear] = customer;
+	queue->data[++queue->rear] = customer;
 }
 
-Customer dequeue(Queue* queue) {
-	if (isEmpty(queue)) {
+Customer dequeue(Queue* queue)
+{
+	if (isEmpty(queue))
+	{
 		printf("Queue is empty. Cannot dequeue.\n");
 		Customer emptyCustomer;
 		emptyCustomer.id = -1;
 		return emptyCustomer;
 	}
-
-	queue->front = (queue->front + 1) % MAX_QUEUE_SIZE;
-	return queue->data[queue->front];
+	return queue->data[queue->front++];
 }
 
-void serveCustomer(Queue* generalCounter, Queue* vipCounter) {
-	if (!isEmpty(vipCounter)) {
-		Customer vipCustomer = dequeue(vipCounter);
-		printf("VIP Counter is serving Customer %d.\n", vipCustomer.id);
-	} else if (!isEmpty(generalCounter)) {
-		Customer generalCustomer = dequeue(generalCounter);
-		printf("General Counter is serving Customer %d.\n", generalCustomer.id);
-	} else {
-		printf("No customers in the queue.\n");
+void displayQueue(Queue* queue)
+{
+	if (isEmpty(queue))
+	{
+		printf("Queue is empty.\n");
+		return;
+	}
+
+	printf("현재 업무 리스트:\n");
+	for (int i = queue->front; i <= queue->rear; i++)
+	{
+		printf("ID: %d, Task: %s, Category: %d\n", queue->data[i].id, queue->data[i].task, queue->data[i].category);
 	}
 }
 
-int main() {
-	Queue generalCounterQueue; // 입출금, 예적금, 종합상담창구 대기열
-	initQueue(&generalCounterQueue);
-
-	Queue vipCounterQueue; // VIP 창구 대기열
-	initQueue(&vipCounterQueue);
-
-	while (1) {
-		// 은행 업무를 대기열에 추가 (임의의 예시)
-		Customer customer1 = {1, 1}; // 입출금, 예적금 업무
-		enqueue(&generalCounterQueue, customer1);
-
-		Customer customer2 = {2, 2}; // 종합상담창구 업무
-		enqueue(&generalCounterQueue, customer2);
-
-		Customer customer3 = {3, 3}; // VIP 창구 업무
-		enqueue(&vipCounterQueue, customer3);
-
-		// 고객 응대
-		serveCustomer(&generalCounterQueue, &vipCounterQueue);
-		serveCustomer(&generalCounterQueue, &vipCounterQueue);
-		serveCustomer(&generalCounterQueue, &vipCounterQueue);
-
-		// 대기 시간을 주기 위한 잠시의 딜레이
-		printf("Waiting for the next round...\n");
-		printf("\n");
-		sleep(3); // 3초 대기
+void serveCustomer(Queue* queue)
+{
+	if (isEmpty(queue))
+	{
+		printf("현재 모든 창구가 비어있습니다.\n");
+		return;
 	}
 
+	Customer customer = dequeue(queue);
+	printf("Serving Customer: ID - %d, Task - %s, Category - %d\n", customer.id, customer.task, customer.category);
+}
+
+void initBank(Bank* bank)
+{
+	for (int i = 0; i < NUM_TELLERS; i++)
+	{
+		initQueue(&bank->queues[i]);
+	}
+	initQueue(&bank->vipQueue);
+}
+
+int getShortestQueue(Bank* bank, int category)
+{
+	int shortestQueue = 0;
+	int shortestQueueLength = MAX_QUEUE_SIZE;
+
+	for (int i = 0; i < NUM_TELLERS; i++) {
+		if (bank->queues[i].rear - bank->queues[i].front < shortestQueueLength)
+		{
+			shortestQueue = i;
+			shortestQueueLength = bank->queues[i].rear - bank->queues[i].front;
+		}
+	}
+	return shortestQueue;
+}
+
+int main()
+{
+	Bank bank;
+	initBank(&bank);
+
+	int customerId = 1;
+	int choice;
+
+	while (1)
+	{
+		printf("\n--- Bank Task Management ---\n");
+		printf("1. Enqueue customer (Category 1: 입출금, 예적금)\n");
+		printf("2. Enqueue customer (Category 2: 종합상담창구)\n");
+		printf("3. Enqueue customer (Category 3: VIP)\n");
+		printf("4. Serve customer\n");
+		printf("5. Display queues\n");
+		printf("6. Exit\n");
+		printf("Enter your choice: ");
+		scanf("%d", &choice);
+
+		switch (choice)
+		{
+			case 1: {
+						char task[50];
+						printf("고객님 업무 내용: ");
+						scanf(" %[^\n]", task);
+
+						Customer customer;
+						customer.id = customerId++;
+						strcpy(customer.task, task);
+						customer.category = 1;
+
+						int shortestQueue = getShortestQueue(&bank, 1);
+						enqueue(&bank.queues[shortestQueue], customer);
+
+						printf("고객님이 창구에 들어갔습니다.\n");
+						break;
+					}
+			case 2: {
+						char task[50];
+						printf("고객님 업무 내용: ");
+						scanf(" %[^\n]", task);
+
+						Customer customer;
+						customer.id = customerId++;
+						strcpy(customer.task, task);
+						customer.category = 2;
+
+						int shortestQueue = getShortestQueue(&bank, 2);
+						enqueue(&bank.queues[shortestQueue], customer);
+
+						printf("고객님이 창구에 들어갔습니다.\n");
+						break;
+					}
+			case 3: {
+						char task[50];
+						printf("Enter customer task: ");
+						scanf(" %[^\n]", task);
+
+						Customer customer;
+						customer.id = customerId++;
+						strcpy(customer.task, task);
+						customer.category = 3;
+
+						enqueue(&bank.vipQueue, customer);
+
+						printf("고객님이 창구에 들어갔습니다.\n");
+						break;
+					}
+			case 4: {
+						printf("고객님 업무 내용: ");
+
+						printf("VIP Teller:\n");
+						serveCustomer(&bank.vipQueue);
+
+						for (int i = 0; i < NUM_TELLERS; i++)
+						{
+							printf("Teller %d:\n", i + 1);
+							serveCustomer(&bank.queues[i]);
+						}
+
+						break;
+					}
+			case 5: {
+						printf("Bank Queues:\n");
+
+						printf("VIP Queue:\n");
+						displayQueue(&bank.vipQueue);
+
+						for (int i = 0; i < NUM_TELLERS; i++) {
+						    printf("Teller %d Queue:\n", i + 1);
+						    displayQueue(&bank.queues[i]);
+						}
+
+						break;
+					}
+			case 6: {
+						printf("Exiting program.\n");
+						exit(0);
+					}
+			default: {
+						 printf("Invalid choice. Please try again.\n");
+						 break;
+					 }
+		}
+	}
 	return 0;
 }
