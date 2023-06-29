@@ -66,7 +66,7 @@ t_word	*rotate_left(t_word *root)
 
 t_word	*balance_tree(t_word *node, const char *word)
 {
-	int	balance = get_balance(node);
+	int	balance = get_balance(node); // 왼쪽 서브트리 높이 - 오른쪽 서브트리 높이
 
 	if (balance > 1 && strcmp(word, node->left->word) < 0)
 		return (rotate_right(node));
@@ -172,7 +172,6 @@ t_word	*delete_word(t_word *root, const char *word)
 			}
 			else
 				*root = *temp;
-
 			free(temp);
 		}
 		else
@@ -185,7 +184,21 @@ t_word	*delete_word(t_word *root, const char *word)
 			root->right = delete_word(root->right, temp->word);
 		}
 	}
-	return (root);
+
+	if (root == NULL)
+		return (root);
+	update_height(root);
+	return (balance_tree(root, word));
+}
+
+void	delete_tree(t_word *root)
+{
+	if (root == NULL)
+		return ;
+	delete_tree(root->left);
+	delete_tree(root->right);
+
+	free(root);
 }
 
 int	main(void)
@@ -198,12 +211,12 @@ int	main(void)
 	while (1)
 	{
 		printf("------단어장------\n");
+		printf("0. 종료\n");
 		printf("1. 단어 추가\n");
 		printf("2. 단어 검색\n");
 		printf("3. 단어 삭제\n");
 		printf("4. 모든 단어 출력\n");
-		printf("5. 종료\n");
-		printf("단어 선택: \n");
+		printf("명령어 선택: ");
 		scanf("%d", &menu);
 
 		if (menu == 1)
@@ -228,18 +241,21 @@ int	main(void)
 			printf("삭제할 단어: ");
 			scanf("%s", word);
 			getchar(); // 버퍼 비우기
-			delete_word(root, word);
+			root = delete_word(root, word);
 		}
 		else if (menu == 4)
 		{
 			printf("모든 단어 출력\n");
 			print_all(root);
 		}
-		else if (menu == 5)
+		else if (menu == 0)
 		{
 			printf("종료\n");
 			break ;
 		}
+		else
+			printf("\n잘못된 입력입니다.\n");
 	}
+	delete_tree(root);
 	return (0);
 }
