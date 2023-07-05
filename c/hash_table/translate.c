@@ -4,7 +4,7 @@
 #include <locale.h>
 #include <stdlib.h>
 
-#define HASH_TABLE_SIZE 100
+#define HASH_TABLE_SIZE 10000
 
 typedef struct s_entry
 {
@@ -26,16 +26,16 @@ unsigned int hash_function(const wchar_t *word)
 void insert_word(const wchar_t *word, const wchar_t *translation)
 {
 	unsigned int index = hash_function(word);
-	t_entry *new = (t_entry *)malloc(sizeof(t_entry));
-	if (new == NULL)
+	t_entry *new_entry = (t_entry *)malloc(sizeof(t_entry));
+	if (new_entry == NULL)
 	{
 		printf("메모리 할당에 실패했습니다.\n");
 		return;
 	}
-	wcscpy(new->word, word);
-	wcscpy(new->translation, translation);
-	new->next = dictionary[index];
-	dictionary[index] = new;
+	wcscpy(new_entry->word, word);
+	wcscpy(new_entry->translation, translation);
+	new_entry->next = dictionary[index];
+	dictionary[index] = new_entry;
 }
 
 const wchar_t *translate(const wchar_t *word)
@@ -67,13 +67,14 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	wchar_t line[100];
+	// 파일에서 한 줄씩 읽어서 해시 테이블에 저장 ex) 사과, apple
 	while (fgetws(line, sizeof(line) / sizeof(line[0]), file) != NULL) // 파일에서 한 줄씩 읽어서 해시 테이블에 저장
 	{
 		wchar_t *word;
 		wchar_t *translation;
 		wchar_t *tmp;
 
-		word = wcstok(line, L",\n", &tmp); // 쉼표와 개행 문자를 기준으로 단어와 뜻을 분리, word에는 단어가, tmp에는 뜻이 저장됨
+		word = wcstok(line, L", \n", &tmp); // 쉼표와 개행 문자를 기준으로 단어와 뜻을 분리, word에는 단어가, tmp에는 뜻이 저장됨
 		translation = wcstok(tmp, L",\n", &tmp); // tmp에 저장된 뜻을 다시 쉼표와 개행 문자를 기준으로 단어와 뜻을 분리, translation에는 뜻이 저장됨
 		insert_word(word, translation);
 	}
