@@ -74,54 +74,54 @@ void addEdge(Graph *graph, char *src, char *dest)
 	add_node_to_list(&(graph->list[dest_index]), src);
 }
 
-int find_common_friends_count(Graph* graph, char* person, char* friend_candidate) {
-	int commonCount = 0;
+// int find_common_friends_count(Graph* graph, char* person, char* friend_candidate) {
+// 	int commonCount = 0;
 
-	Node* personNode = graph->list[find_vertex_index(graph, person)]->next;
-	Node* friendNode = graph->list[find_vertex_index(graph, friend_candidate)]->next;
+// 	Node* personNode = graph->list[find_vertex_index(graph, person)]->next;
+// 	Node* friendNode = graph->list[find_vertex_index(graph, friend_candidate)]->next;
 
-	while (personNode) {
-		Node* tempFriend = friendNode;
-		while (tempFriend) {
-			if (strcmp(personNode->name, tempFriend->name) == 0) {
-				commonCount++;
-				break;
-			}
-			tempFriend = tempFriend->next;
-		}
-		personNode = personNode->next;
-	}
+// 	while (personNode) {
+// 		Node* tempFriend = friendNode;
+// 		while (tempFriend) {
+// 			if (strcmp(personNode->name, tempFriend->name) == 0) {
+// 				commonCount++;
+// 				break;
+// 			}
+// 			tempFriend = tempFriend->next;
+// 		}
+// 		personNode = personNode->next;
+// 	}
 
-	return commonCount;
-}
+// 	return commonCount;
+// }
 
-void recommendFriends(Graph* graph, char* person) {
-	int personIndex = find_vertex_index(graph, person);
-	if (personIndex == -1) {
-		printf("해당 이름을 가진 노드가 없습니다.\n");
-		return;
-	}
+// void recommendFriends(Graph* graph, char* person) {
+// 	int personIndex = find_vertex_index(graph, person);
+// 	if (personIndex == -1) {
+// 		printf("해당 이름을 가진 노드가 없습니다.\n");
+// 		return;
+// 	}
 
-	int maxCommonCount = 0;
-	int maxCommonIndex = -1;
-	Node* friendList = graph->list[personIndex];
+// 	int maxCommonCount = 0;
+// 	int maxCommonIndex = -1;
+// 	Node* friendList = graph->list[personIndex];
 
-	Node* temp = friendList->next;
-	while (temp) {
-		int commonCount = find_common_friends_count(graph, person, temp->name);
-		if (commonCount > maxCommonCount) {
-			maxCommonCount = commonCount;
-			maxCommonIndex = find_vertex_index(graph, temp->name);
-		}
-		temp = temp->next;
-	}
+// 	Node* temp = friendList->next;
+// 	while (temp) {
+// 		int commonCount = find_common_friends_count(graph, person, temp->name);
+// 		if (commonCount > maxCommonCount) {
+// 			maxCommonCount = commonCount;
+// 			maxCommonIndex = find_vertex_index(graph, temp->name);
+// 		}
+// 		temp = temp->next;
+// 	}
 
-	if (maxCommonIndex != -1) {
-		printf("%s에게 추천하는 친구: %s\n", person, graph->list[maxCommonIndex]->name);
-	} else {
-		printf("%s에게 추천할 수 있는 친구가 없습니다.\n", person);
-	}
-}
+// 	if (maxCommonIndex != -1) {
+// 		printf("%s에게 추천하는 친구: %s\n", person, graph->list[maxCommonIndex]->name);
+// 	} else {
+// 		printf("%s에게 추천할 수 있는 친구가 없습니다.\n", person);
+// 	}
+// }
 
 
 int main() {
