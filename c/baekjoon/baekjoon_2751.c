@@ -18,19 +18,19 @@ void swap(int *a, int *b)
 
 int partition(int *arr, int low, int high)
 {
-    int random_pivot_index = random_pivot(low, high);
+    int random_pivot_index = random_pivot(low, high); // 난수 생성
     int pivot;
 
-    swap(&arr[random_pivot_index], &arr[high]);
+    swap(&arr[random_pivot_index], &arr[high]); // 난수와 high의 값을 swap
     pivot = arr[high];
     int left = low;
-    int right = high - 1;
+    int right = high;
 
-    while (left <= right)
+    while (left < right)
     {
-        while (left <= right && arr[left] <= pivot)
+        while (left < right && arr[left] <= pivot)
             left++;
-        while (left <= right && arr[right] >= pivot)
+        while (left < right && arr[right] >= pivot)
             right--;
         if (left <= right)
             swap(&arr[left], &arr[right]);
@@ -47,8 +47,8 @@ void	quick_sort(int *arr, int low, int high)
 	if (low < high)
     {
         pivot = partition(arr, low, high);
-        quick_sort(arr, low, pivot - 1);
-        quick_sort(arr, pivot + 1, high);
+        quick_sort(arr, low, pivot - 1); // pivot보다 작은 값들을 정렬
+        quick_sort(arr, pivot + 1, high); // pivot보다 큰 값들을 정렬
     }
 
 }
