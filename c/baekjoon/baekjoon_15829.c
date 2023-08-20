@@ -13,16 +13,16 @@ int main(void)
 {
 	int L;
 	char arr[51];
-	long long sum = 0;
+	long long H = 0;
 	long long R = 1; // 거듭제곱을 저장
 
 	scanf("%d %s", &L, arr);
 
 	for (int i = 0; i < L; i++)
 	{
-		sum += ((arr[i] - 'a' + 1) * R) % M; // (a * r) mod M -> (문자값 × r^(문자 인덱스)) % M
+		H += ((arr[i] - 'a' + 1) * R) % M; // (a * r) mod M -> (문자값 × r^(문자 인덱스)) % M
 		R *= r % M; // pow(r, n) 값이 계속 커져서 mod M 해주는거
 	}
-	printf("%lld\n", sum);
+	printf("%lld\n", H);
 	return (0);
 }
