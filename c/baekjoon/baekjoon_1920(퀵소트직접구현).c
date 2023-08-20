@@ -56,16 +56,18 @@ int binary_search(int *arrN, int key, int low, int high)
     int mid_value;
     int i = 0;
 
-    while (arrN[i] != NULL)
+    while (low <= high)
     {
         mid_value = (low + high) / 2;
-        if (key == mid_value)
+        if (key == arrN[mid_value])
             return (1);
-        else if (key > mid_value)
+        else if (key > arrN[mid_value])
+            low = mid_value + 1;
+        else
+            high = mid_value - 1;
     }
     return (0);
 }
-
 
 /*arrN을 오름차순으로 정렬하고 arrM의 value가 arrN에 있으면 1, 없으면 0*/
 int main(void)
@@ -78,10 +80,10 @@ int main(void)
 
     scanf("%d", &N);
     for (int i = 0; i < N; i++)
-        scanf("%d", &arrN[i]);
-    scanf("%d\n", &M);
+        scanf( "%d", &arrN[i]);
+    scanf("%d", &M);
     for (int i = 0; i < M; i++)
-        scanf("%d\n", arrM[i]);
+        scanf(" %d", &arrM[i]);
     quick_sort(arrN, 0, N - 1); // arrN 정렬
     for (int i = 0; i < M; i++)
         printf("%d\n", binary_search(arrN, arrM[i], 0, N - 1));
