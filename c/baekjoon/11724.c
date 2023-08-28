@@ -12,7 +12,7 @@ void dfs(int v)
 	visited[v] = 1;
 	for (int i = 1; i <= n; i++)
 	{
-		if (map[v][i] == 1 && visited[i] == 0)
+		if (map[v][i] == 1 && visited[i] == 0) // map[v][i] == 1 간선이 있다는 의미, visited[i] == 0 아직 방문되지 않았다는 뜻
 			dfs(i);
 	}
 }
