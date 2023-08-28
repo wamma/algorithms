@@ -11,8 +11,10 @@ void dfs(int v)
 {
 	visited[v] = 1;
 	for (int i = 1; i <= n; i++)
-		if (map[v][i] != 0 && visited[i] == 0)
+	{
+		if (map[v][i] == 1 && visited[i] == 0)
 			dfs(i);
+	}
 }
 
 int main(void)
