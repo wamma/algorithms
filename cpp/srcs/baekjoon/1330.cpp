@@ -4,14 +4,14 @@ using namespace std;
 
 int main(void)
 {
-	int a, b;
+    int a, b;
 
-	cin >> a >> b;
+    cin >> a >> b;
 
-	if (a > b)
-		cout << ">";
-	else if (a < b)
-		cout << "<";
-	else
-		cout << "==";
+    if (a > b)
+        cout << ">";
+    else if (a < b)
+        cout << "<";
+    else
+        cout << "==";
 }

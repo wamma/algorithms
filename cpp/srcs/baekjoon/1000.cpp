@@ -2,13 +2,13 @@
 
 using namespace std;
 
-int main (int ac, char **av)
+int main(int ac, char **av)
 {
-	int A,B;
+    int A, B;
 
-	cin >> A;
-	cin >> B;
+    cin >> A;
+    cin >> B;
 
-	cout << A + B;
-	return 0;
+    cout << A + B;
+    return 0;
 }
