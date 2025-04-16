@@ -12,6 +12,8 @@ public class royalKnight {
 
         int col = colChar - 'a' + 1;
 
+		System.out.println("col is " + col);
+
 		int[][] steps = {{-2, -1}, {-1, -2}, {1, -2}, {2, -1}, {2, 1}, {1, 2}, {-1, 2}, {-2, 1}};
 
 		int result = 0;
