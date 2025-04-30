@@ -4,7 +4,15 @@ public:
         int evenCount = 0;
 
         for (int num : nums) {
-            if (to_string(num).length() % 2 == 0) {
+            int digits = 0;
+            int tmp = num;
+
+            while (tmp > 0) {
+                tmp /= 10;
+                digits++;
+            }
+
+            if (digits % 2 == 0) {
                 evenCount++;
             }
         }
